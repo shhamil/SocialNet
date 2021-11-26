@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block main-section %}
+{% block ws-sec %}
+{% for user_queryset in users %}
+<div class="col-lg-3 col-md-4 col-sm-6 col-12">
+    <div class="company_profile_info">
+        <div class="company-up-info">
+            {% if user_queryset.avatar %}
+            <img src="{{ user_queryset.avatar.url }}" alt="">
+            {% else %}
+            <img src="http://placehold.it/120x120" alt="">
+            {% endif %}
+             {% if not user_queryset.first_name and not user_queryset.last_name %}
+            <h3>{{ user_queryset.username }}</h3>
+            {% else %}
+            <h3>{{ user_queryset.first_name }} {{ user_queryset.last_name }}</h3>
+            {% endif %}
+            <h4>{{ user_queryset.about_me }}</h4>
+            <ul>
+                <li><a href="#" id="{{ user_queryset.id }}" data-id="{{ user_queryset.id }}" data-action="{% if user in user_queryset.followers.all %}un{% endif %}follow" class="follow">
+                    {% if user in user_queryset.followers.all %}
+                        Unfollow
+                    {% else %}
+                        Follow
+                    {% endif %}
+                </a></li>
+                <li><a href="#" title="" class="message-us">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                    </svg>
+                </a></li>
+            </ul>
+        </div>
+        <a href="{% url 'accaunt:user_profile' user_queryset.username  %}" title="" class="view-more-pro">View Profile</a>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+{% endblock %}
+
+{% block domready %}
+  $('#' + id).click(function(e){
+    e.preventDefault();
+    alert($(this))
+    $.post('{% url "accaunt:user_follow" %}',
+      {
+        id: $(this).data('id'),
+        action: $(this).data('action')
+      },
+      function(data){
+        if (data['status'] == 'ok') {
+          var previous_action = $('a.follow').data('action');
+
+          // toggle data-action
+          $('a.follow').data('action',
+            previous_action == 'follow' ? 'unfollow' : 'follow');
+          // toggle link text
+          $('a.follow').text(
+            previous_action == 'follow' ? 'Unfollow' : 'Follow');
+
+          // update total followers
+        }
+      }
+    );
+  });
+{% endblock %}

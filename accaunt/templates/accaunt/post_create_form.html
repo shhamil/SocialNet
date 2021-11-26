@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block ws-sec %}
+    <h3>Post a project</h3>
+        <div class="post-project-fields">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    {% for field in form %}
+                    <div class="col-lg-12">
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                    <div class="col-lg-12">
+                        <ul>
+                            <li>
+                                <button type="submit" value="submit">Post</button>
+                            </li>
+                            <li><a href="#" title="">Cancel</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+{% endblock %}

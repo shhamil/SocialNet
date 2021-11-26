@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import TextInput
-from .models import AdvUser
+from .models import AdvUser, Post
 
 
 class UserRegistration(forms.ModelForm):
@@ -22,9 +22,46 @@ class UserRegistration(forms.ModelForm):
 
     class Meta:
         model = AdvUser
-        fields = ('username', 'first_name', 'email', 'password', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password', 'password2')
         widgets = {
             'username': TextInput(attrs={'placeholder': 'Username'}),
             'first_name': TextInput(attrs={'placeholder': 'First name'}),
+            'last_name': TextInput(attrs={'placeholder': 'Last name'}),
             'email': TextInput(attrs={'placeholder': 'Email'})
+        }
+
+
+class UserSettingsForm(forms.ModelForm):
+
+    class Meta:
+        model = AdvUser
+        fields = ('username', 'first_name', 'last_name', 'about_me', 'email', 'avatar')
+        widgets = {
+            'username': TextInput(attrs={'placeholder': 'Username'}),
+            'first_name': TextInput(attrs={'placeholder': 'First name'}),
+            'last_name': TextInput(attrs={'placeholder': 'Last name'}),
+            'about_me': TextInput(attrs={'placeholder': 'About me'}),
+            'email': TextInput(attrs={'placeholder': 'Email'}),
+        }
+
+
+class PostCreateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.user_pk = kwargs.pop('pk', None)
+        super(PostCreateForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        user = AdvUser.objects.get(pk=self.user_pk)
+        post = super().save(commit=False)
+        post.author = user
+        post.save()
+        return post
+
+    class Meta:
+        model = Post
+        fields = ('title', 'text')
+        widgets = {
+            'title': TextInput(attrs={'placeholder': 'Title'}),
+            'text': TextInput(attrs={'placeholder': 'Post body'}),
         }

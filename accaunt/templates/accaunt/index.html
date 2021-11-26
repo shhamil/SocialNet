@@ -6,11 +6,19 @@
     <div class="user-profile">
         <div class="username-dt">
             <div class="usr-pic">
-                <img src="{{ user.avatar.url }}"  alt="">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" style="height:120px; width:120px"  alt="">
+                {% else %}
+                <img src="http://placehold.it/120x120" alt="">
+                {% endif %}
             </div>
         </div>
         <div class="user-specs">
+            {% if not user.first_name and not user.last_name %}
             <h3>{{ user.username }}</h3>
+            {% else %}
+            <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+            {% endif %}
             <span>{{ user.about_me }}</span>
         </div>
     </div>
@@ -24,7 +32,7 @@
             <span>{{ user.followers.all.count }}</span>
         </li>
         <li>
-            <a href="my-profile-feed.html" title="">View Profile</a>
+            <a href="{% url 'accaunt:settings' %}">View Profile</a>
         </li>
     </ul>
 </div>
@@ -45,74 +53,71 @@
 </div>
 {% endblock %}
 {% block ws-sec %}
+<div class="post-st">
+    <ul class="mb-2">
+        <li><a href="{% url 'accaunt:post_create' %}" title="">Create post</a></li>
+    </ul>
+</div>
 <div class="posts-section">
-                                    <div class="post-bar">
-                                        <div class="post_topbar">
-                                            <div class="usy-dt">
-                                                <img src="images/resources/us-pic.png" alt="">
-                                                <div class="usy-name">
-                                                    <h3>John Doe</h3>
-                                                    <span><img src="images/clock.png" alt="">3 min ago</span>
-                                                </div>
-                                            </div>
-                                            <div class="ed-opts">
-                                                <a href="#" title="" class="ed-opts-open"><i
-                                                        class="la la-ellipsis-v"></i></a>
-                                                <ul class="ed-options">
-                                                    <li><a href="#" title="">Edit Post</a></li>
-                                                    <li><a href="#" title="">Delete</a></li>
-                                                    <li><a href="#" title="">Hide</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="epi-sec">
-                                            <ul class="descp">
-                                                <li><img src="images/icon8.png" alt=""><span>Epic Coder</span></li>
-                                                <li><img src="images/icon9.png" alt=""><span>India</span></li>
-                                            </ul>
-                                            <ul class="bk-links">
-                                                <li><a href="#" title=""><i class="la la-bookmark"></i></a></li>
-                                                <li><a href="#" title=""><i class="la la-envelope"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="job_descp">
-                                            <h3>Senior Wordpress Developer</h3>
-                                            <ul class="job-dt">
-                                                <li><a href="#" title="">Full Time</a></li>
-                                                <li><span>$30 / hr</span></li>
-                                            </ul>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam luctus
-                                                hendrerit metus, ut ullamcorper quam finibus at. Etiam id magna sit
-                                                amet... <a href="#" title="">view more</a></p>
-                                            <ul class="skill-tags">
-                                                <li><a href="#" title="">HTML</a></li>
-                                                <li><a href="#" title="">PHP</a></li>
-                                                <li><a href="#" title="">CSS</a></li>
-                                                <li><a href="#" title="">Javascript</a></li>
-                                                <li><a href="#" title="">Wordpress</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="job-status-bar">
-                                            <ul class="like-com">
-                                                <li>
-                                                    <a href="#"><i class="fas fa-heart"></i> Like</a>
-                                                    <img src="images/liked-img.png" alt="">
-                                                    <span>25</span>
-                                                </li>
-                                                <li><a href="#" class="com"><i class="fas fa-comment-alt"></i> Comment
-                                                    15</a></li>
-                                            </ul>
-                                            <a href="#"><i class="fas fa-eye"></i>Views 50</a>
-                                        </div>
-                                    </div>
-                                    <div class="process-comm">
-                                        <div class="spinner">
-                                            <div class="bounce1"></div>
-                                            <div class="bounce2"></div>
-                                            <div class="bounce3"></div>
-                                        </div>
-                                    </div>
-                                </div>
+    {% for post in posts %}
+    <div class="post-bar">
+        <div class="post_topbar">
+            <div class="usy-dt">
+                <img src="images/resources/us-pic.png" alt="">
+                <div class="usy-name">
+                    <h3>{{ post.author.first_name }} {{ post.author.last_name }}</h3>
+                    <span><img src="images/clock.png" alt="">{{ post.created|timesince }}</span>
+                </div>
+            </div>
+            <div class="ed-opts">
+                <a href="#" title="" class="ed-opts-open"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+</svg></a>
+                <ul class="ed-options">
+                    <li><a href="#" title="">Edit Post</a></li>
+                    <li><a href="#" title="">Delete</a></li>
+                    <li><a href="#" title="">Hide</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="epi-sec">
+            <ul class="descp">
+                <li><img src="images/icon8.png" alt=""><span>{{ post.author.about_me }}</span></li>
+            </ul>
+        </div>
+        <div class="job_descp">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.text }}</p>
+        </div>
+        <div class="job-status-bar">
+            <ul class="like-com">
+                <li>
+                    <a href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                        </svg>25
+                    </a>
+                </li>
+                <li><a href="#" class="com"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
+  <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+</svg> Comment
+                    15</a></li>
+            </ul>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+</svg> Views 50</a>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="process-comm">
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 {% block right-sidebar %}
 <div class="widget widget-jobs">
